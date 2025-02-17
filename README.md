@@ -41,3 +41,10 @@ To replicate the runs enter the following code:
 python batsimulation.py -seed <seednumberhere>
 ```
 
+Package requirements
+--------------------
+pyroomacoustics
+matplotlib 
+numpy
+scipy
+pandas

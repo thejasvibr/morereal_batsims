@@ -7,6 +7,8 @@ Absolutely required inputs are:
 
 * `-seed` : the seed number is the only thing that is required, aside from the other arguments that can be changed (Type `python batsimulation.py -h` for more info)
 
+![](trajectory_mics_seed-3456.png)
+
 ## An example run
 
 ```

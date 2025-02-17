@@ -17,7 +17,7 @@ parse_roomdims = lambda X: np.fromstring(X[1:-1], dtype=np.float64, sep=',')
 #%%
 
 args = argparse.ArgumentParser()
-args.add_argument('-seed', type=int, default=5678)
+args.add_argument('-seed', type=int)
 args.add_argument('-room_dims', type=parse_roomdims, default=[7,5,3], help='LxBxH of the room')
 args.add_argument('-ipi', type=float, default=100, help='interpulse interval in milliseconds')
 args.add_argument('-firstcall_delay', type=float, default=0,
@@ -135,7 +135,7 @@ t_call = np.linspace(0,call_durn, int(fs*call_durn))
 call_type = str(choose(['logarithmic','linear','hyperbolic'], 1)[0])
 batcall = signal.chirp(t_call, maxf, t_call[-1], minf,call_type)
 batcall *= signal.tukey(batcall.size, 0.1)
-batcall *= 0.5
+batcall *= 0.1
 #batcall = np.random.normal(0,0.1, batcall.size)
 
 # Now filter out only the emission points and generate the simulated audio
@@ -174,6 +174,11 @@ plt.gca().set_zlim(0,room_dims[2])
 
 plt.savefig(f'trajectory_mics_seed-{param.seed}.png')
 
+#%%
+dd_empoints = spl.distance_matrix(emission_points.loc[:,'x':'z'], emission_points.loc[:,'x':'z'])
+distance_travelled = [dd_empoints[i,j] for i,j in zip(range(dd_empoints.shape[0]), range(1,dd_empoints.shape[0]))]
+speed = np.array(distance_travelled)/(param.ipi*1e-3)
+
 
 #%% SAving all simulation related parameters
 room.mic_array.to_wav(
@@ -186,6 +191,6 @@ room.mic_array.to_wav(
 pd.DataFrame(array_geom, columns=['x','y','z']).to_csv(f'single_bat_{param.seed}.csv')
 
 # save the flight path with the emission points and times 
-pd.DataFrame(t_xyz_emission, index=range(t_xyz_emission.shape[0]), columns='t,x,y,z,is_emissionpoint'.split(',')).to_csv('flight_and_call_groundtruth_{param.seed}.csv')
+pd.DataFrame(t_xyz_emission, index=range(t_xyz_emission.shape[0]), columns='t,x,y,z,is_emissionpoint'.split(',')).to_csv(f'flight_and_call_groundtruth_{param.seed}.csv')
 
 
